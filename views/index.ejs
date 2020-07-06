@@ -1,0 +1,35 @@
+<%- include ('./partials/header.ejs') %>
+
+    <body>
+        <%- include ('./partials/navbar.ejs') %>
+            <div class="container">
+
+                <hr>
+                <h1>Pergunte ou Responda as Seguintes Perguntas Para Contribuir!</h1>
+                <hr>
+                <a href="/perguntar" class="btn btn-primary">Perguntar</a>
+                <hr>
+                <br>
+
+                <% perguntas.forEach(pergunta => { %>
+                    <div class="card">
+                        <div class="card-body">
+                            <h3>
+                                <%= pergunta.titulo %>
+                            </h3>
+
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="/responder" class="btn btn-primary">Responder Pergunta</a>
+                        </div>
+
+                    </div>
+                    <% }) %>
+            </div>
+
+
+    </body>
+    <%- include ('./partials/footer.ejs') %>
+
+        </html>
