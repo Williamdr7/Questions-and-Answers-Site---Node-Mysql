@@ -2,6 +2,7 @@ const express = require("express")
 const app = express();
 const bodyParser = require("body-parser")
 const Pergunta = require("./database/Pergunta")
+const Resposta = require("./database/Resposta")
 
 //Configurando o EJS
 app.set("view engine", "ejs");
@@ -27,7 +28,12 @@ app.get("/perguntar", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    Pergunta.findAll({ raw: true }).then(perguntas => {
+    Pergunta.findAll({
+        raw: true,
+        order: [
+            ['id', "DESC"]
+        ]
+    }).then(perguntas => {
         res.render("index", {
             perguntas: perguntas
         })
@@ -45,6 +51,41 @@ app.post("/perguntar", (req, res) => {
         res.redirect("/")
     })
 })
+
+app.get("/pergunta/:id", (req, res) => {
+    var iduser = req.params.id
+    Pergunta.findOne({
+        where: { id: iduser }
+    }).then((pagina) => {
+        if (pagina != undefined) {
+
+            Resposta.findAll({
+                where: { pergunta_id: pagina.id }
+            }).then(respostas => {
+                res.render('pergunta', {
+                    pagina: pagina,
+                    respostas: respostas
+                })
+
+            })
+        } else {
+            res.redirect("/")
+        }
+    })
+})
+
+app.post("/resposta", (req, res) => {
+    const corpo = req.body.corpo
+    const pergunta_id = req.body.pergunta_id
+
+    Resposta.create({
+        corpo: corpo,
+        pergunta_id: pergunta_id
+    }).then(() => {
+        res.redirect('/pergunta/' + pergunta_id)
+    })
+})
+
 
 app.listen(3001, () => {
     console.log("Servidor Rodando")
